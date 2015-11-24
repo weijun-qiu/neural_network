@@ -1,4 +1,5 @@
-/* nn.c - a naive implementation of neural network */
+/* nn_realderv.c - a naive implementation of neural network using
+   real mathmetical differentiaion algorithm */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,18 +68,48 @@ void train(void) {
 
     // back-propagate
 
+    for (j = 0; j < LAYER_NUM; j++) {
+      for (k = 0; k < NEURON_PER_LAYER; k++) {
+        hlayers[j][k].delta = 0;
+      }
+    }
+
+    output.delta = output.value - f(input);
+    for (j = 0; j < NEURON_PER_LAYER; j++) {
+      output.inputs[j]->delta = output.delta *
+        output.weights[i];
+    }
+    for (j = LAYER_NUM - 1; j > 0; j--) {
+      for (k = 0; k < NEURON_PER_LAYER; k++) {
+        if (j == 0) {
+          hlayers[0][k].inputs[0]->delta += hlayers[0][k].delta *
+            hlayers[0][k].weights[0];
+        }else {
+          for (l = 0; l < NEURON_PER_LAYER; l++) {
+            hlayers[j][k].inputs[l]->delta += hlayers[j][k].delta *
+              hlayers[j][k].weights[l];
+          }
+        }
+      }
+    }
+
     Neuron cpy[LAYER_NUM][NEURON_PER_LAYER];
     memcpy(cpy, hlayers, sizeof cpy);
 
+    for (j = 0; j < NEURON_PER_LAYER; j++) {
+      output.weights[j] -= output.delta * output.inputs[j]->value * RATE;
+    }
     for (j = 0; j < LAYER_NUM; j++) {
       for (k = 0; k < NEURON_PER_LAYER; k++) {
         if (j == 0) {
           cpy[0][k].weights[0] = hlayers[0][k].weights[0] -
-            derv(&hlayers[0][k].weights[0]) * RATE;
+            hlayers[0][k].delta * input * RATE;
+          // derv(&hlayers[0][k].weights[0]) * RATE;
         }else {
           for (l = 0; l < NEURON_PER_LAYER; l++) {
             cpy[j][k].weights[l] = hlayers[j][k].weights[l] -
-              derv(&hlayers[j][k].weights[l]) * RATE;
+              hlayers[j][k].delta * hlayers[j][k].inputs[l]->value * RATE;
+              //derv(&hlayers[j][k].weights[l]) * RATE;
           }
         }
       }
@@ -123,19 +154,20 @@ double feed_forward(void) {
     output.value += output.inputs[i]->value *
       output.weights[i];
   }
+
   // can add a sigmoid here
   return output.value;
 }
 
 
-/* calculate the derivative of the given weight */
+/* calculate dE/dw */
 
 double derv(double *w) {
   *w += 0.0000001;
   double x = pow(feed_forward() - f(input), 2); // E(x+0.00001)
-  *w -= 0.0000002;
+  *w -= 0.000002;
   double y = pow(feed_forward() - f(input), 2); // E(x-0.00001)
-  *w += 0.000001;
+  *w += 0.0000001;
   double diff = x - y;
   return diff / 0.0000001;
 }

@@ -1,6 +1,6 @@
 /* nn.h - a naive implementation of neural network */
 
-#define RATE 0.0000005        // learning rate
+#define RATE 0.00000008        // learning rate
 #define LAYER_NUM 2           // number of hidden layers
 #define NEURON_PER_LAYER 5   // number of neurons per layer
 #define DOMAIN_MIN 0          // domain lower bound
@@ -10,6 +10,7 @@ typedef struct neuron{
   double value;
   struct neuron *inputs[NEURON_PER_LAYER];
   double weights[NEURON_PER_LAYER];
+  double delta;
 } Neuron;
 
 double input;
