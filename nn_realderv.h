@@ -1,6 +1,6 @@
 /* nn.h - a naive implementation of neural network */
 
-#define RATE 0.00000008        // learning rate
+#define RATE 0.00000008        // Learning rate
 #define LAYER_NUM 2           // number of hidden layers
 #define NEURON_PER_LAYER 5   // number of neurons per layer
 #define DOMAIN_MIN 0          // domain lower bound

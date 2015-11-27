@@ -6,7 +6,7 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
-#include "nn.h"
+#include "nn_realderv.h"
 
 int main(int argc, char *argv[]){
   initialize();
@@ -49,7 +49,7 @@ void initialize(void) {
     output.inputs[i] = &hlayers[LAYER_NUM - 1][i];
     output.weights[i] = (double)(rand() % 2000) / 1000 - 1;
   }
-  // printw();
+  printw();
 }
 
 
@@ -58,7 +58,7 @@ void initialize(void) {
 void train(void) {
   int i, j, k, l;
   for (i = 0; i < sizeof trset / sizeof trset[0]; i++) {
-    printf("\nTrainning Round %d\n", i);
+    printf("\nTraining Round %d\n", i);
 
     // feed an input into the network
     
